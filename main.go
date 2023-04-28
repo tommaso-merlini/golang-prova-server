@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-    app := fiber.New()
+   app := fiber.New()
 
    app.Get("/", func(c *fiber.Ctx) error {
         return c.JSON(fiber.Map{
@@ -16,6 +16,8 @@ func main() {
     });
 
     app.Static("/loaderio-04cbc2e6e8994582817d57faa8742ee5", "/loaderio-04cbc2e6e8994582817d57faa8742ee5.html")
+
+    mongodb()
 
     log.Fatal(app.Listen(":3000"))
 }
