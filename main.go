@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
@@ -10,8 +11,6 @@ import (
 type Product struct {
     mgm.DefaultModel `bson:",inline"`
 	Name string `json:"name" bson:"name"`
-
-	//    Pages            int    `json:"pages" bson:"pages"`
 }
 
 func main() {
@@ -24,11 +23,16 @@ func main() {
     });
 
     app.Get("/product/:id", func(c *fiber.Ctx) error {
-        product := &Product{}    
+        product := &Product{}
         coll := mgm.Coll(product)
 
         // Find and decode the doc to a book model.
-        _ = coll.FindByID(c.Params("id"), product)
+        err := coll.FindByID(c.Params("id"), product)
+
+        if err != nil {
+            fmt.Println(err)
+        }
+        
         return c.JSON(product)
     });
 
