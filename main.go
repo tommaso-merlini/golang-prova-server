@@ -4,7 +4,15 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/kamva/mgm/v3"
 )
+
+type Product struct {
+    mgm.DefaultModel `bson:",inline"`
+	Name string `json:"name" bson:"name"`
+
+	//    Pages            int    `json:"pages" bson:"pages"`
+}
 
 func main() {
    app := fiber.New()
@@ -15,9 +23,16 @@ func main() {
         })
     });
 
-    app.Static("/loaderio-04cbc2e6e8994582817d57faa8742ee5", "/loaderio-04cbc2e6e8994582817d57faa8742ee5.html")
+    app.Get("/product/:id", func(c *fiber.Ctx) error {
+        product := &Product{}    
+        coll := mgm.Coll(product)
 
-    mongodb()
+        // Find and decode the doc to a book model.
+        _ = coll.FindByID(c.Params("id"), product)
+        return c.JSON(product)
+    });
+
+    app.Static("/loaderio-04cbc2e6e8994582817d57faa8742ee5", "/loaderio-04cbc2e6e8994582817d57faa8742ee5.html")
 
     log.Fatal(app.Listen(":3000"))
 }
