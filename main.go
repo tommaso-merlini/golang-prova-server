@@ -1,9 +1,11 @@
 package main
 
 import (
-	"net/http"
+	"fmt"
+	"log"
+	"server/db"
 
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
 	"github.com/kamva/mgm/v3"
 )
 
@@ -13,29 +15,30 @@ type Product struct {
 }
 
 func main() {
+	app := fiber.New()
+	db.Init()
 
-    // app.Get("/product/:id", func(c *fiber.Ctx) error {
-    //     product := &Product{}
-    //     coll := mgm.Coll(product)
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.JSON(fiber.Map{
+			"status": "ok",
+		})
+	})
 
-    //     // Find and decode the doc to a book model.
-    //     err := coll.FindByID(c.Params("id"), product)
+	app.Get("/product/:id", func(c *fiber.Ctx) error {
+		product := &Product{}
+		coll := mgm.Coll(product)
 
-    //     if err != nil {
-    //         fmt.Println(err)
-    //     }
-        
-    //     return c.JSON(product)
-    // });
-    r := gin.Default()
+		// Find and decode the doc to a book model.
+		err := coll.FindByID(c.Params("id"), product)
 
-    r.StaticFile("/loaderio-04cbc2e6e8994582817d57faa8742ee5", "./loaderio-04cbc2e6e8994582817d57faa8742ee5.html")
+		if err != nil {
+			fmt.Println(err)
+		}
 
-    r.GET("/", func(c *gin.Context) {
-        c.JSON(http.StatusOK, gin.H{
-            "status": "ok",
-        })
-    })
+		return c.JSON(product)
+	})
 
-    r.Run(":3000") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	app.Static("/loaderio-04cbc2e6e8994582817d57faa8742ee5", "/loaderio-04cbc2e6e8994582817d57faa8742ee5.html")
+
+	log.Fatal(app.Listen(":3000"))
 }
