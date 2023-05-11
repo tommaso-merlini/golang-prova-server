@@ -40,5 +40,5 @@ func main() {
 
 	app.Static("/loaderio-04cbc2e6e8994582817d57faa8742ee5", "/loaderio-04cbc2e6e8994582817d57faa8742ee5.html")
 
-	log.Fatal(app.Listen("0.0.0.0:3000"))
+	log.Fatal(app.Listen("localhost:3000"))
 }
